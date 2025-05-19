@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Employee Attendance System</title>
+
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f9fafb;
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 20px 30px 40px;
+    border-radius: 10px;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.1);
+    color: #222;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #1565c0;
+    font-weight: 700;
+  }
+  label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: block;
+    font-size: 1.1rem;
+  }
+  input[type="text"], select, input[type="date"] {
+    width: 100%;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1.8px solid #ccc;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+  }
+  input[type="text"]:focus, select:focus, input[type="date"]:focus {
+    border-color: #1565c0;
+    outline: none;
+  }
+  button {
+    background-color: #1565c0;
+    color: white;
+    font-size: 1.1rem;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.25s ease;
+    margin-top: 10px;
+  }
+  button:disabled {
+    background-color: #a3a3a3;
+    cursor: not-allowed;
+  }
+  button:hover:not(:disabled) {
+    background-color: #0d3f87;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 22px;
+    box-shadow: 0 3px 8px rgba(21,101,192,0.15);
+  }
+  th, td {
+    padding: 12px 14px;
+    border: 1px solid #ddd;
+    text-align: left;
+    font-size: 1rem;
+  }
+  th {
+    background: #1565c0;
+    color: white;
+    font-weight: 600;
+  }
+  tbody tr:nth-child(even) {
+    background: #f2f6fc;
+  }
+  #statusMessage {
+    margin-top: 18px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: green;
+    text-align: center;
+  }
+  .dropdown {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+  }
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    width: 100%;
+    max-height: 180px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    z-index: 10;
+    box-sizing: border-box;
+  }
+  .dropdown-content div {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 1rem;
+    border-bottom: 1px solid #eee;
+  }
+  .dropdown-content div:last-child {
+    border-bottom: none;
+  }
+  .dropdown-content div:hover {
+    background-color: #f1f1f1;
+  }
+</style>
+
+</head>
+<body>
+
+<h1>Employee Attendance System</h1>
+
+<label for="masterFileInput">Upload Master Excel File</label>
+<input type="file" id="masterFileInput" accept=".xls,.xlsx" />
+<button id="removeFileBtn" style="display:none;">Remove Uploaded File</button>
+
+<label for="dateInput">Select Date for Attendance</label>
+<input type="date" id="dateInput" disabled />
+
+<label for="employeeCodeInput">Enter Employee Code</label>
+<div class="dropdown">
+  <input type="text" id="employeeCodeInput" placeholder="Type employee code to see matches" disabled autocomplete="off" />
+  <div id="autocompleteList" class="dropdown-content"></div>
+</div>
+
+<label for="trainingSelect">Select Training</label>
+<select id="trainingSelect" disabled>
+  <option value="">-- Select Training --</option>
+</select>
+
+<button id="addEmployeeBtn" disabled>Add Employee to List</button>
+
+<table id="selectedEmployeesTable" style="display:none;">
+  <thead>
+    <tr><th>Employee Code</th><th>Employee Name</th><th>Section</th><th>Remove</th></tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<button id="submitBtn" disabled>Submit Attendance</button>
+<button id="downloadBtn" style="display:none; margin-left: 10px;">Download Updated Master File</button>
+
+<div id="statusMessage"></div>
+
+<!-- SheetJS CDN -->
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/shim.min.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
+<script>
+  const masterFileInput = document.getElementById('masterFileInput');
+  const dateInput = document.getElementById('dateInput');
+  const employeeCodeInput = document.getElementById('employeeCodeInput');
+  const autocompleteList = document.getElementById('autocompleteList');
+  const trainingSelect = document.getElementById('trainingSelect');
+  const addEmployeeBtn = document.getElementById('addEmployeeBtn');
+  const selectedEmployeesTable = document.getElementById('selectedEmployeesTable');
+  const selectedEmployeesTbody = selectedEmployeesTable.querySelector('tbody');
+  const submitBtn = document.getElementById('submitBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const removeFileBtn = document.getElementById('removeFileBtn');
+  const statusMessage = document.getElementById('statusMessage');
+
+  let workbook = null;
+  let worksheet = null;
+  let employeeMap = new Map(); // employeeCode -> { name, section, row }
+  let trainingColumns = new Map(); // trainingName -> column letter
+  let selectedEmployees = new Map(); // employeeCode -> { name, section }
+
+  // Utility: Convert column number to letter (1 -> A)
+  function columnToLetter(column) {
+    let temp, letter = '';
+    while (column > 0) {
+      temp = (column - 1) % 26;
+      letter = String.fromCharCode(temp + 65) + letter;
+      column = (column - temp - 1) / 26;
+    }
+    return letter;
+  }
+
+  // Utility: Get month sheet name from date string
+  function getMonthSheetName(dateStr) {
+    const date = new Date(dateStr);
+    const month = date.toLocaleString('default', { month: 'long' });
+    const year = date.getFullYear();
+    return `${month} ${year}`;
+  }
+
+  // Reset UI and state
+  function resetApp() {
+    employeeMap.clear();
+    trainingColumns.clear();
+    selectedEmployees.clear();
+    employeeCodeInput.value = '';
+    dateInput.value = '';
+    trainingSelect.innerHTML = '<option value="">-- Select Training --</option>';
+    addEmployeeBtn.disabled = true;
+    employeeCodeInput.disabled = true;
+    dateInput.disabled = true;
+    trainingSelect.disabled = true;
+    selectedEmployeesTbody.innerHTML = '';
+    selectedEmployeesTable.style.display = 'none';
+    submitBtn.disabled = true;
+    downloadBtn.style.display = 'none';
+    statusMessage.textContent = '';
+    autocompleteList.innerHTML = '';
+    autocompleteList.style.display = 'none';
+    removeFileBtn.style.display = 'none'; // Hide remove button
+  }
+
+  masterFileInput.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    resetApp();
+    const reader = new FileReader();
+    reader.onload = e => {
+      const data = new Uint8Array(e.target.result);
+      workbook = XLSX.read(data, { type: 'array' });
+      const firstSheetName = workbook.SheetNames[0];
+      worksheet = workbook.Sheets[firstSheetName];
+      parseMasterSheet();
+      employeeCodeInput.disabled = false;
+      dateInput.disabled = false;
+      trainingSelect.disabled = false;
+      statusMessage.style.color = 'green';
+      statusMessage.textContent = 'Master file loaded. Start entering employee codes.';
+      removeFileBtn.style.display = 'inline-block'; // Show remove button
+    };
+    reader.readAsArrayBuffer(file);
+  });
+
+  // Parse Master Sheet columns:
+  // B: Employee Code (rows 3-700)
+  // C: Employee Name
+  // D: Section
+  // E-J (5-10): Training subjects row 2 headers
+  function parseMasterSheet() {
+    employeeMap.clear();
+    trainingColumns.clear();
+
+    const empStartRow = 3;
+    const empEndRow = 700;
+    const codeCol = 'B';
+    const nameCol = 'C';
+    const sectionCol = 'D';
+
+    // Read trainings headers E2:J2 (columns 5 to 10)
+    for (let col = 5; col <= 10; col++) {
+      const colLetter = columnToLetter(col);
+      const cellAddress = colLetter + '2';
+      const cell = worksheet[cellAddress];
+      if (cell && cell.v) {
+        trainingColumns.set(cell.v.trim(), colLetter);
+      }
+    }
+
+    // Read employees and their sections
+    for (let row = empStartRow; row <= empEndRow; row++) {
+      const codeCell = worksheet[codeCol + row];
+      const nameCell = worksheet[nameCol + row];
+      const sectionCell = worksheet[sectionCol + row];
+      if (codeCell && codeCell.v && nameCell && nameCell.v && sectionCell && sectionCell.v) {
+        const code = codeCell.v.toString().trim();
+        const name = nameCell.v.toString().trim();
+        const section = sectionCell.v.toString().trim();
+        employeeMap.set(code, { name, section, row });
+      }
+    }
+
+    // Populate training select dropdown
+    trainingSelect.innerHTML = '<option value="">-- Select Training --</option>';
+    for (const trainingName of trainingColumns.keys()) {
+      const opt = document.createElement('option');
+      opt.value = trainingName;
+      opt.textContent = trainingName;
+      trainingSelect.appendChild(opt);
+    }
+  }
+
+  // Autocomplete employee code input
+  employeeCodeInput.addEventListener('input', () => {
+    const input = employeeCodeInput.value.trim().toLowerCase();
+    autocompleteList.innerHTML = '';
+    if (!input) {
+      autocompleteList.style.display = 'none';
+      addEmployeeBtn.disabled = true;
+      return;
+    }
+    let matches = [];
+    for (let [code, { name }] of employeeMap.entries()) {
+      if (code.toLowerCase().startsWith(input) || name.toLowerCase().includes(input)) {
+        matches.push({ code, name });
+      }
+      if (matches.length >= 20) break;
+    }
+
+    if (matches.length === 0) {
+      autocompleteList.style.display = 'none';
+      addEmployeeBtn.disabled = true;
+      return;
+    }
+
+    for (const match of matches) {
+      const div = document.createElement('div');
+      div.textContent = `${match.code} - ${match.name}`;
+      div.dataset.code = match.code;
+      div.dataset.name = match.name;
+      div.addEventListener('click', () => {
+        employeeCodeInput.value = match.code;
+        autocompleteList.style.display = 'none';
+        addEmployeeBtn.disabled = selectedEmployees.has(match.code);
+      });
+      autocompleteList.appendChild(div);
+    }
+    autocompleteList.style.display = 'block';
+    addEmployeeBtn.disabled = true;
+  });
+
+  document.addEventListener('click', e => {
+    if (!employeeCodeInput.contains(e.target) && !autocompleteList.contains(e.target)) {
+      autocompleteList.style.display = 'none';
+    }
+  });
+
+  addEmployeeBtn.addEventListener('click', () => {
+    const code = employeeCodeInput.value.trim();
+    if (!employeeMap.has(code)) {
+      alert('Employee code not found');
+      return;
+    }
+    if (selectedEmployees.has(code)) {
+      alert('Employee already added');
+      return;
+    }
+    const emp = employeeMap.get(code);
+    selectedEmployees.set(code, { name: emp.name, section: emp.section });
+    addEmployeeToTable(code, emp.name, emp.section);
+    employeeCodeInput.value = '';
+    addEmployeeBtn.disabled = true;
+    employeeCodeInput.focus();
+    updateSubmitButtonState();
+  });
+
+  function addEmployeeToTable(code, name, section) {
+    if (selectedEmployeesTable.style.display === 'none') {
+      selectedEmployeesTable.style.display = 'table';
+    }
+    const tr = document.createElement('tr');
+    tr.dataset.code = code;
+
+    const tdCode = document.createElement('td');
+    tdCode.textContent = code;
+    tr.appendChild(tdCode);
+
+    const tdName = document.createElement('td');
+    tdName.textContent = name;
+    tr.appendChild(tdName);
+
+    const tdSection = document.createElement('td');
+    tdSection.textContent = section;
+    tr.appendChild(tdSection);
+
+    const tdRemove = document.createElement('td');
+    const removeBtn = document.createElement('button');
+    removeBtn.textContent = 'Remove';
+    removeBtn.style.backgroundColor = '#c62828';
+    removeBtn.style.color = 'white';
+    removeBtn.style.border = 'none';
+    removeBtn.style.padding = '6px 12px';
+    removeBtn.style.borderRadius = '5px';
+    removeBtn.style.cursor = 'pointer';
+    removeBtn.addEventListener('click', () => {
+      selectedEmployees.delete(code);
+      tr.remove();
+      if (selectedEmployees.size === 0) {
+        selectedEmployeesTable.style.display = 'none';
+      }
+      updateSubmitButtonState();
+    });
+    tdRemove.appendChild(removeBtn);
+    tr.appendChild(tdRemove);
+
+    selectedEmployeesTbody.appendChild(tr);
+  }
+
+  dateInput.addEventListener('change', updateSubmitButtonState);
+  trainingSelect.addEventListener('change', updateSubmitButtonState);
+
+  function updateSubmitButtonState() {
+    submitBtn.disabled = !(selectedEmployees.size > 0 && trainingSelect.value !== '' && dateInput.value !== '');
+  }
+
+  submitBtn.addEventListener('click', () => {
+    if (selectedEmployees.size === 0) {
+      alert('No employees selected');
+      return;
+    }
+    if (!trainingSelect.value) {
+      alert('Please select training');
+      return;
+    }
+    if (!dateInput.value) {
+      alert('Please select date');
+      return;
+    }
+    // Determine month sheet name from date
+    const monthSheetName = getMonthSheetName(dateInput.value);
+
+    // Check if sheet exists, else duplicate an existing sheet
+    if (!workbook.Sheets[monthSheetName]) {
+      let existingSheetName = workbook.SheetNames.find(name => name !== monthSheetName);
+      if (existingSheetName) {
+        // Duplicate the existing sheet
+        const existingSheet = workbook.Sheets[existingSheetName];
+        const newSheet = XLSX.utils.aoa_to_sheet(XLSX.utils.sheet_to_json(existingSheet, { header: 1 }));
+        workbook.SheetNames.push(monthSheetName);
+        workbook.Sheets[monthSheetName] = newSheet;
+      } else {
+        // If no existing sheet, create a new one with headers
+        let ws = {};
+        // Header row 2: columns B,C,D,E...J (B=code,C=name,D=section,E-J training subjects)
+        const masterSheetName = workbook.SheetNames[0];
+        const masterSheet = workbook.Sheets[masterSheetName];
+
+        // Copy row 2 from master sheet for trainings headers (E2:J2)
+        const trainingsHeadersRange = XLSX.utils.decode_range("E2:J2");
+        let headers = {};
+        for(let C = trainingsHeadersRange.s.c; C <= trainingsHeadersRange.e.c; ++C){
+          let cell_addr = XLSX.utils.encode_cell({c:C,r:1}); // row=1 (0-based)
+          headers[cell_addr] = masterSheet[cell_addr] ? {...masterSheet[cell_addr]} : { t:"s", v:"" };
+        }
+        // Add employee code, name, section headers B2,D2
+        headers["B2"] = masterSheet["B2"] ? {...masterSheet["B2"]} : { t:"s", v: "Employee Code" };
+        headers["C2"] = masterSheet["C2"] ? {...masterSheet["C2"]} : { t:"s", v: "Employee Name" };
+        headers["D2"] = masterSheet["D2"] ? {...masterSheet["D2"]} : { t:"s", v: "Section" };
+
+        ws["!ref"] = "B2:J2";
+        Object.assign(ws, headers);
+
+        workbook.SheetNames.push(monthSheetName);
+        workbook.Sheets[monthSheetName] = ws;
+      }
+    }
+
+    const monthSheet = workbook.Sheets[monthSheetName];
+    // Append employees if not exists and increment training count
+    // Search existing employee codes in month sheet B3:B700
+    let maxRow = 700;
+    let empInMonth = new Map();
+    for(let row=3;row<=maxRow;row++){
+      let codeCell = monthSheet["B"+row];
+      let nameCell = monthSheet["C"+row];
+      let sectionCell = monthSheet["D"+row];
+      if(codeCell && codeCell.v && nameCell && nameCell.v && sectionCell && sectionCell.v){
+        empInMonth.set(codeCell.v.toString().trim(), {name:nameCell.v.toString().trim(), section:sectionCell.v.toString().trim(), row:row});
+      }
+    }
+    const trainingColLetter = trainingColumns.get(trainingSelect.value);
+    if(!trainingColLetter){
+       alert("Training column not found in master sheet.");
+      return;
+    }
+
+    // Now for each selected employee
+    for(let [code, emp] of selectedEmployees.entries()){
+      let empRow = null;
+      if(empInMonth.has(code)){
+        empRow = empInMonth.get(code).row;
+      }else{
+        // find next empty row
+        empRow = maxRow + 1;
+        maxRow++;
+        monthSheet['B' + empRow] = { t: 's', v: code };
+        monthSheet['C' + empRow] = { t: 's', v: emp.name };
+        monthSheet['D' + empRow] = { t: 's', v: emp.section };
+      }
+      const trainingCellAddr = trainingColLetter + empRow;
+      let currentValue = 0;
+      if (monthSheet[trainingCellAddr] && !isNaN(Number(monthSheet[trainingCellAddr].v))) {
+        currentValue = Number(monthSheet[trainingCellAddr].v);
+      }
+      monthSheet[trainingCellAddr] = { t: 'n', v: currentValue + 1 };
+    }
+
+    statusMessage.textContent = "Attendance recorded in sheet: " + monthSheetName + ". Add more or download when done.";
+    submitBtn.disabled = true;
+    addEmployeeBtn.disabled = true;
+    employeeCodeInput.value = "";
+    dateInput.value = "";
+    trainingSelect.value = "";
+    selectedEmployees.clear();
+    selectedEmployeesTbody.innerHTML = "";
+    selectedEmployeesTable.style.display = 'none';
+    downloadBtn.style.display = 'inline-block';
+  });
+
+  downloadBtn.addEventListener('click', () => {
+    if (!workbook) return;
+    const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'binary' });
+
+    function s2ab(s) {
+      var buf = new ArrayBuffer(s.length);
+      var view = new Uint8Array(buf);
+      for (var i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+      return buf;
+    }
+
+    var blob = new Blob([s2ab(wbout)], { type: "application/octet-stream" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    let d = new Date();
+    a.download = `Attendance_File_Updated_${d.getFullYear()}${(d.getMonth() + 1).toString().padStart(2, '0')}${d.getDate().toString().padStart(2, '0')}.xlsx`;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 0);
+    statusMessage.textContent = "Updated attendance file downloaded.";
+
+    // Automatically upload the downloaded file
+    const newFile = new File([blob], a.download, { type: "application/octet-stream" });
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(newFile);
+    masterFileInput.files = dataTransfer.files;
+
+    // Show the remove button
+    removeFileBtn.style.display = 'inline-block';
+  });
+
+  removeFileBtn.addEventListener('click', () => {
+    masterFileInput.value = ''; // Clear the file input
+    resetApp(); // Reset the application state
+  });
+</script>
+
+</body>
+</html>

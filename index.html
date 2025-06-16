@@ -1,230 +1,270 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Employee Attendance System</title>
-
-<style>
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f9fafb;
-    max-width: 900px;
-    margin: 30px auto;
-    padding: 20px 30px 40px;
-    border-radius: 10px;
-    box-shadow: 0 10px 24px rgba(0,0,0,0.1);
-    color: #222;
-  }
-  h1 {
-    text-align: center;
-    margin-bottom: 25px;
-    color: #1565c0;
-    font-weight: 700;
-  }
-  label {
-    font-weight: 600;
-    margin-bottom: 6px;
-    display: block;
-    font-size: 1.1rem;
-  }
-  input[type="text"], select, input[type="date"] {
-    width: 100%;
-    padding: 10px 14px;
-    margin-bottom: 16px;
-    font-size: 1rem;
-    border-radius: 6px;
-    border: 1.8px solid #ccc;
-    box-sizing: border-box;
-    transition: border-color 0.3s ease;
-  }
-  input[type="text"]:focus, select:focus, input[type="date"]:focus {
-    border-color: #1565c0;
-    outline: none;
-  }
-  button {
-    background-color: #1565c0;
-    color: white;
-    font-size: 1.1rem;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.25s ease;
-    margin-top: 10px;
-  }
-  button:disabled {
-    background-color: #a3a3a3;
-    cursor: not-allowed;
-  }
-  button:hover:not(:disabled) {
-    background-color: #0d3f87;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 22px;
-    box-shadow: 0 3px 8px rgba(21,101,192,0.15);
-  }
-  th, td {
-    padding: 12px 14px;
-    border: 1px solid #ddd;
-    text-align: left;
-    font-size: 1rem;
-  }
-  th {
-    background: #1565c0;
-    color: white;
-    font-weight: 600;
-  }
-  tbody tr:nth-child(even) {
-    background: #f2f6fc;
-  }
-  #statusMessage {
-    margin-top: 18px;
-    font-size: 1rem;
-    font-weight: 600;
-    color: green;
-    text-align: center;
-  }
-  .dropdown {
-    position: relative;
-    display: inline-block;
-    width: 100%;
-  }
-  .dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #fff;
-    width: 100%;
-    max-height: 180px;
-    overflow-y: auto;
-    border: 1px solid #ccc;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-    z-index: 10;
-    box-sizing: border-box;
-  }
-  .dropdown-content div {
-    padding: 8px 12px;
-    cursor: pointer;
-    font-size: 1rem;
-    border-bottom: 1px solid #eee;
-  }
-  .dropdown-content div:last-child {
-    border-bottom: none;
-  }
-  .dropdown-content div:hover {
-    background-color: #f1f1f1;
-  }
-
-  /* Modal Styles */
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.45);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-  }
-  .modal {
-    background: white;
-    border-radius: 8px;
-    padding: 24px 30px;
-    max-width: 400px;
-    width: 90%;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  }
-  .modal h2 {
-    margin-top: 0;
-    margin-bottom: 16px;
-    font-weight: 700;
-    color: #1565c0;
-    font-size: 1.4rem;
-  }
-  .modal label {
-    margin-bottom: 8px;
-    font-weight: 600;
-    display: block;
-  }
-  .modal input[type="text"] {
-    width: 100%;
-    padding: 10px 14px;
-    margin-bottom: 20px;
-    font-size: 1rem;
-    border-radius: 6px;
-    border: 1.8px solid #ccc;
-    box-sizing: border-box;
-    transition: border-color 0.3s ease;
-  }
-  .modal input[type="text"]:focus {
-    border-color: #1565c0;
-    outline: none;
-  }
-  .modal-buttons {
-    text-align: right;
-  }
-  .modal-buttons button {
-    margin-left: 12px;
-    padding: 10px 18px;
-    font-size: 1rem;
-  }
-</style>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Employee Attendance System</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f9fafb;
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 20px 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.1);
+      color: #222;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #1565c0;
+      font-weight: 700;
+    }
+    label {
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: block;
+      font-size: 1.1rem;
+    }
+    input[type="text"], select, input[type="date"] {
+      width: 100%;
+      padding: 10px 14px;
+      margin-bottom: 16px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1.8px solid #ccc;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+    }
+    input[type="text"]:focus, select:focus, input[type="date"]:focus {
+      border-color: #1565c0;
+      outline: none;
+    }
+    button {
+      background-color: #1565c0;
+      color: white;
+      font-size: 1.1rem;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.25s ease;
+      margin-top: 10px;
+    }
+    button:disabled {
+      background-color: #a3a3a3;
+      cursor: not-allowed;
+    }
+    button:hover:not(:disabled) {
+      background-color: #0d3f87;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 22px;
+      box-shadow: 0 3px 8px rgba(21,101,192,0.15);
+    }
+    th, td {
+      padding: 12px 14px;
+      border: 1px solid #ddd;
+      text-align: left;
+      font-size: 1rem;
+    }
+    th {
+      background: #1565c0;
+      color: white;
+      font-weight: 600;
+    }
+    tbody tr:nth-child(even) {
+      background: #f2f6fc;
+    }
+    #statusMessage {
+      margin-top: 18px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: green;
+      text-align: center;
+    }
+    .dropdown {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+    }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #fff;
+      width: 100%;
+      max-height: 180px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      z-index: 10;
+      box-sizing: border-box;
+    }
+    .dropdown-content div {
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 1rem;
+      border-bottom: 1px solid #eee;
+      white-space: nowrap;
+    }
+    .dropdown-content div:last-child {
+      border-bottom: none;
+    }
+    .dropdown-content div:hover {
+      background-color: #f1f1f1;
+    }
+    /* Modal Styles */
+    #newEmpModal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      padding-top: 100px;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      overflow: auto;
+      background: rgba(0,0,0,0.5);
+    }
+    #newEmpModalContent {
+      background: white;
+      margin: auto;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 400px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      font-size: 1rem;
+    }
+    #newEmpModalContent label {
+      margin-top: 12px;
+    }
+    #newEmpModalContent input {
+      width: 100%;
+      padding: 8px 10px;
+      margin-top: 4px;
+      font-size: 1rem;
+      box-sizing: border-box;
+      border: 1.5px solid #ccc;
+      border-radius: 5px;
+      transition: border-color 0.3s;
+    }
+    #newEmpModalContent input:focus {
+      border-color: #1565c0;
+      outline: none;
+    }
+    #modalButtons {
+      margin-top: 20px;
+      text-align: right;
+    }
+    #modalButtons button {
+      margin-left: 10px;
+      padding: 8px 16px;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+    }
+    #modalCancelBtn {
+      background-color: #aaa;
+      color: white;
+    }
+    #modalCancelBtn:hover {
+      background-color: #888;
+    }
+    #modalSubmitBtn {
+      background-color: #1565c0;
+      color: white;
+    }
+    #modalSubmitBtn:disabled {
+      background-color: #a3a3a3;
+      cursor: not-allowed;
+    }
+    #modalSubmitBtn:hover:enabled {
+      background-color: #0d3f87;
+    }
+  </style>
 </head>
 <body>
 
 <h1>Employee Attendance System</h1>
 
-<label for="masterFileInput">Upload Master Excel File</label>
+<label for="masterFileInput">Upload Main Excel File</label>
 <input type="file" id="masterFileInput" accept=".xls,.xlsx" />
 <button id="removeFileBtn" style="display:none;">Remove Uploaded File</button>
 
 <label for="dateInput">Select Date for Attendance</label>
-<input type="date" id="dateInput" disabled />
+<input type="date" id="dateInput" readonly />
 
-<label for="employeeCodeInput">Enter Employee Code</label>
+<label for="sectionInput">Enter Section</label>
 <div class="dropdown">
-  <input type="text" id="employeeCodeInput" placeholder="Type employee code to see matches" disabled autocomplete="off" />
-  <div id="autocompleteList" class="dropdown-content"></div>
+  <input type="text" id="sectionInput" placeholder="Enter section" autocomplete="off" />
+  <div id="sectionList" class="dropdown-content"></div>
 </div>
 
-<label for="trainingSelect">Select Training</label>
-<select id="trainingSelect" disabled>
-  <option value="">-- Select Training --</option>
+<label for="trainerInput">Trainer Name</label>
+<input type="text" id="trainerInput" placeholder="Enter trainer name" />
+
+<label for="trainingTypeSelect">Training Type</label>
+<select id="trainingTypeSelect">
+  <option value="">-- Select Training Type --</option>
+  <option value="5S">5S</option>
+  <option value="Process">Process</option>
+  <option value="Handling">Handling</option>
+  <option value="Deviation">Deviation</option>
 </select>
+
+<label for="modeSelect">Mode of Training</label>
+<select id="modeSelect">
+  <option value="">-- Select Mode --</option>
+  <option value="OPL/OJT">OPL/OJT</option>
+  <option value="Video">Video</option>
+</select>
+
+<label for="trainingTopicInput">Select Training Topic</label>
+<div class="dropdown">
+  <input type="text" id="trainingTopicInput" placeholder="Type training topic" autocomplete="off" />
+  <div id="trainingTopicList" class="dropdown-content"></div>
+</div>
+
+<label for="employeeCodeInput">Enter Employee Code or Code - Name</label>
+<div class="dropdown">
+  <input type="text" id="employeeCodeInput" placeholder="Type employee code or code - name" autocomplete="off" />
+  <div id="autocompleteList" class="dropdown-content"></div>
+</div>
 
 <button id="addEmployeeBtn" disabled>Add Employee to List</button>
 
 <table id="selectedEmployeesTable" style="display:none;">
   <thead>
-    <tr><th>Employee Code</th><th>Employee Name</th><th>Section</th><th>Remove</th></tr>
+    <tr>
+      <th>Employee Code</th>
+      <th>Employee Name</th>
+      <th>Remove</th>
+    </tr>
   </thead>
   <tbody></tbody>
 </table>
 
 <button id="submitBtn" disabled>Submit Attendance</button>
-<button id="downloadBtn" style="display:none; margin-left: 10px;">Download Updated Master File</button>
+<button id="downloadBtn" style="display:none; margin-left: 10px;">Download Updated Main File</button>
 
 <div id="statusMessage"></div>
 
-<!-- Modal for new employee info -->
-<div id="newEmployeeModal" class="modal-overlay" style="display:none;">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <h2 id="modalTitle">Add New Employee</h2>
-    <form id="newEmployeeForm">
-      <label for="newEmployeeName">Employee Name:</label>
-      <input type="text" id="newEmployeeName" name="newEmployeeName" required autocomplete="off" />
-      <label for="newEmployeeSection">Section:</label>
-      <input type="text" id="newEmployeeSection" name="newEmployeeSection" required autocomplete="off" />
-      <div class="modal-buttons">
-        <button type="button" id="cancelNewEmployeeBtn">Cancel</button>
-        <button type="submit" id="submitNewEmployeeBtn">Add</button>
-      </div>
-    </form>
+<!-- Employee Modal -->
+<div id="newEmpModal">
+  <div id="newEmpModalContent">
+    <h3>New Employee Details</h3>
+    <label for="newEmpName">Employee Name (required)</label>
+    <input type="text" id="newEmpName" />
+    <label for="newEmpCode">Employee Code (optional)</label>
+    <input type="text" id="newEmpCode" />
+    <label for="newEmpSection">Section (required)</label>
+    <input type="text" id="newEmpSection" />
+    <div id="modalButtons">
+      <button id="modalCancelBtn">Cancel</button>
+      <button id="modalSubmitBtn" disabled>Add Employee</button>
+    </div>
   </div>
 </div>
 
@@ -235,9 +275,15 @@
 <script>
   const masterFileInput = document.getElementById('masterFileInput');
   const dateInput = document.getElementById('dateInput');
+  const sectionInput = document.getElementById('sectionInput');
+  const sectionList = document.getElementById('sectionList');
+  const trainerInput = document.getElementById('trainerInput');
+  const trainingTypeSelect = document.getElementById('trainingTypeSelect');
+  const modeSelect = document.getElementById('modeSelect');
+  const trainingTopicInput = document.getElementById('trainingTopicInput');
+  const trainingTopicList = document.getElementById('trainingTopicList');
   const employeeCodeInput = document.getElementById('employeeCodeInput');
   const autocompleteList = document.getElementById('autocompleteList');
-  const trainingSelect = document.getElementById('trainingSelect');
   const addEmployeeBtn = document.getElementById('addEmployeeBtn');
   const selectedEmployeesTable = document.getElementById('selectedEmployeesTable');
   const selectedEmployeesTbody = selectedEmployeesTable.querySelector('tbody');
@@ -246,193 +292,312 @@
   const removeFileBtn = document.getElementById('removeFileBtn');
   const statusMessage = document.getElementById('statusMessage');
 
-  // Modal elements for new employee input
-  const newEmployeeModal = document.getElementById('newEmployeeModal');
-  const newEmployeeForm = document.getElementById('newEmployeeForm');
-  const newEmployeeNameInput = document.getElementById('newEmployeeName');
-  const newEmployeeSectionInput = document.getElementById('newEmployeeSection');
-  const cancelNewEmployeeBtn = document.getElementById('cancelNewEmployeeBtn');
+  // Modal elements
+  const newEmpModal = document.getElementById('newEmpModal');
+  const newEmpName = document.getElementById('newEmpName');
+  const newEmpCode = document.getElementById('newEmpCode');
+  const newEmpSection = document.getElementById('newEmpSection');
+  const modalCancelBtn = document.getElementById('modalCancelBtn');
+  const modalSubmitBtn = document.getElementById('modalSubmitBtn');
 
   let workbook = null;
-  let worksheet = null;
-  let employeeMap = new Map(); // employeeCode -> { name, section, row }
-  let newEmployeesMap = new Map(); // newly added employees not in master file
-  let trainingColumns = new Map(); // trainingName -> column letter
-  let selectedEmployees = new Map(); // employeeCode -> { name, section }
-  let pendingNewEmployeeCode = ''; // When modal is open, store current unknown employee code
+  let employeeMap = new Map();
+  let sectionSuggestions = [];
+  let trainingTopics = [];
+  let employeeCodes = [];
+  let employeeNames = [];
+  const TRAINING_TOPIC_START_COL = 4;
+  const TRAINING_TOPIC_END_COL = 96;
+  const TRAINING_TOPIC_APPEND_COL = 97;
 
-  function columnToLetter(column) {
-    let temp, letter = '';
-    while (column > 0) {
-      temp = (column - 1) % 26;
-      letter = String.fromCharCode(temp + 65) + letter;
-      column = (column - temp - 1) / 26;
+  function colIndexToLetter(index) {
+    let letters = '';
+    while(index >= 0){
+      letters = String.fromCharCode((index % 26) + 65) + letters;
+      index = Math.floor(index / 26) - 1;
     }
-    return letter;
+    return letters;
   }
 
-  function getMonthSheetName(dateStr) {
-    const date = new Date(dateStr);
-    const month = date.toLocaleString('default', { month: 'long' });
-    const year = date.getFullYear();
-    return `${month} ${year}`;
+  function showSuggestions(container, suggestions, inputElement){
+    container.innerHTML = '';
+    if(suggestions.length === 0){
+      container.style.display = 'none';
+      return;
+    }
+    suggestions.forEach(text => {
+      const div = document.createElement('div');
+      div.textContent = text;
+      div.addEventListener('click', () => {
+        inputElement.value = text;
+        inputElement.focus();
+        container.style.display = 'none';
+        updateButtonsState();
+      });
+      container.appendChild(div);
+    });
+    container.style.display = 'block';
   }
 
-  function resetApp() {
+  function valueExistsIgnoreCase(arr, val){
+    return arr.some(v => v.toLowerCase() === val.toLowerCase());
+  }
+
+  function updateButtonsState(){
+    addEmployeeBtn.disabled = employeeCodeInput.value.trim() === '';
+    submitBtn.disabled = !dateInput.value
+      || trainerInput.value.trim() === ''
+      || sectionInput.value.trim() === ''
+      || trainingTypeSelect.value === ''
+      || modeSelect.value === ''
+      || trainingTopicInput.value.trim() === ''
+      || selectedEmployeesTbody.children.length === 0;
+  }
+
+  function resetApp(){
     employeeMap.clear();
-    newEmployeesMap.clear();
-    trainingColumns.clear();
-    selectedEmployees.clear();
-    pendingNewEmployeeCode = '';
-    employeeCodeInput.value = '';
-    dateInput.value = '';
-    trainingSelect.innerHTML = '<option value="">-- Select Training --</option>';
-    addEmployeeBtn.disabled = true;
-    employeeCodeInput.disabled = true;
-    dateInput.disabled = true;
-    trainingSelect.disabled = true;
+    sectionSuggestions = [];
+    trainingTopics = [];
+    employeeCodes = [];
+    employeeNames = [];
+    sectionInput.value = '';
+    trainingTopicInput.value = '';
+    trainerInput.value = '';
+    trainingTypeSelect.value = '';
+    modeSelect.value = '';
+    //dateInput.value = ''; //Comment out this line
     selectedEmployeesTbody.innerHTML = '';
     selectedEmployeesTable.style.display = 'none';
     submitBtn.disabled = true;
+    addEmployeeBtn.disabled = true;
     downloadBtn.style.display = 'none';
     statusMessage.textContent = '';
     autocompleteList.innerHTML = '';
     autocompleteList.style.display = 'none';
-    removeFileBtn.style.display = 'none';
-    hideNewEmployeeModal();
+    sectionList.innerHTML = '';
+    sectionList.style.display = 'none';
+    trainingTopicList.innerHTML = '';
+    trainingTopicList.style.display = 'none';
   }
 
-  masterFileInput.addEventListener('change', e => {
+  masterFileInput.addEventListener('change', e=>{
     const file = e.target.files[0];
-    if (!file) return;
+    if(!file) return;
     resetApp();
     const reader = new FileReader();
-    reader.onload = e => {
+    reader.onload = e=>{
       const data = new Uint8Array(e.target.result);
-      workbook = XLSX.read(data, { type: 'array' });
-      const firstSheetName = workbook.SheetNames[0];
-      worksheet = workbook.Sheets[firstSheetName];
-      parseMasterSheet();
-      employeeCodeInput.disabled = false;
-      dateInput.disabled = false;
-      trainingSelect.disabled = false;
+      workbook = XLSX.read(data, {type:'array'});
+      parseData();
       statusMessage.style.color = 'green';
-      statusMessage.textContent = 'Master file loaded. Start entering employee codes.';
+      statusMessage.textContent = 'Main file loaded. Start entering data.';
       removeFileBtn.style.display = 'inline-block';
-    };
+    }
     reader.readAsArrayBuffer(file);
   });
 
-  function parseMasterSheet() {
-    employeeMap.clear();
-    trainingColumns.clear();
-
-    const empStartRow = 3;
-    const codeCol = 'B';
-    const nameCol = 'C';
-    const sectionCol = 'D';
-
-    for (let col = 5; col <= 10; col++) {
-      const colLetter = columnToLetter(col);
-      const cellAddress = colLetter + '2';
-      const cell = worksheet[cellAddress];
-      if (cell && cell.v) {
-        trainingColumns.set(cell.v.trim(), colLetter);
-      }
+  function parseData(){
+    const sheet = workbook.Sheets["Employees_Wise"];
+    if(!sheet){
+      alert('Employees_Wise sheet not found in uploaded file');
+      return;
     }
+    employeeMap = new Map();
+    sectionSuggestions = [];
+    trainingTopics = [];
+    employeeCodes = [];
+    employeeNames = [];
+    let row = 3;
+    while(true){
+      const codeCell = sheet['B'+row];
+      const nameCell = sheet['C'+row];
+      const sectionCell = sheet['D'+row];
+      if(!codeCell && !nameCell && !sectionCell) break;
 
-    for (let row = empStartRow; row <= 700; row++) {
-      const codeCell = worksheet[codeCol + row];
-      const nameCell = worksheet[nameCol + row];
-      const sectionCell = worksheet[sectionCol + row];
-      if (codeCell && codeCell.v && nameCell && nameCell.v && sectionCell && sectionCell.v) {
-        const code = codeCell.v.toString().trim();
-        const name = nameCell.v.toString().trim();
-        const section = sectionCell.v.toString().trim();
-        employeeMap.set(code, { name, section, row });
+      const code = codeCell && codeCell.v ? String(codeCell.v).trim() : '';
+      const name = nameCell && nameCell.v ? String(nameCell.v).trim() : '';
+      const section = sectionCell && sectionCell.v ? String(sectionCell.v).trim() : '';
+
+      if(code && name){
+        employeeMap.set(code, {name:name, section: section});
+        employeeCodes.push(code);
+        employeeNames.push(name);
       }
+      if(section && !valueExistsIgnoreCase(sectionSuggestions, section)){
+        sectionSuggestions.push(section);
+      }
+      row++;
+      if(row > 1000) break;
     }
+    for(let colIndex=TRAINING_TOPIC_START_COL; colIndex<=TRAINING_TOPIC_END_COL; colIndex++){
+      const colLetter = colIndexToLetter(colIndex);
+      const cell = sheet[colLetter + '2'];
 
-    trainingSelect.innerHTML = '<option value="">-- Select Training --</option>';
-    for (const trainingName of trainingColumns.keys()) {
-      const opt = document.createElement('option');
-      opt.value = trainingName;
-      opt.textContent = trainingName;
-      trainingSelect.appendChild(opt);
+      if(cell && cell.v){
+        trainingTopics.push(String(cell.v).trim());
+      }
     }
   }
 
-  employeeCodeInput.addEventListener('input', () => {
-    const input = employeeCodeInput.value.trim().toLowerCase();
-    autocompleteList.innerHTML = '';
-    if (!input) {
-      autocompleteList.style.display = 'none';
-      addEmployeeBtn.disabled = true;
+  sectionInput.addEventListener('input', e=>{
+    const val = e.target.value.trim().toLowerCase();
+    if(val === ''){
+      sectionList.style.display = 'none';
       return;
     }
+    const matched = sectionSuggestions.filter(v => v.toLowerCase().includes(val));
+    showSuggestions(sectionList, matched, sectionInput);
+  });
+  sectionInput.addEventListener('blur', ()=>{ setTimeout(() => {sectionList.style.display = 'none';}, 200); });
+
+  trainingTopicInput.addEventListener('input', e=>{
+    const val = e.target.value.trim().toLowerCase();
+    if(val === ''){
+      trainingTopicList.style.display = 'none';
+      return;
+    }
+    const matched = trainingTopics.filter(v => v.toLowerCase().includes(val));
+    showSuggestions(trainingTopicList, matched, trainingTopicInput);
+  });
+  trainingTopicInput.addEventListener('blur', ()=>{ setTimeout(() => {trainingTopicList.style.display = 'none';}, 200); });
+
+  employeeCodeInput.addEventListener('input', e=>{
+    const val = e.target.value.trim().toLowerCase();
+    if(val === ''){
+      autocompleteList.style.display = 'none';
+      updateButtonsState();
+      return;
+    }
+    // Enable Add button always if any input
+    addEmployeeBtn.disabled = false;
+
+    // If input includes ' - ', do not show suggestions
+    if(val.includes(' - ')){
+      autocompleteList.style.display = 'none';
+      updateButtonsState();
+      return;
+    }
+
     let matches = [];
-    for (let [code, { name }] of employeeMap.entries()) {
-      if (code.toLowerCase().startsWith(input) || name.toLowerCase().includes(input)) {
-        matches.push({ code, name });
+    employeeCodes.forEach((code, i)=>{
+      const name = employeeNames[i];
+      if(code.toLowerCase().startsWith(val) || name.toLowerCase().includes(val)){
+        matches.push(`${code} - ${name}`);
       }
-      if (matches.length >= 20) break;
-    }
-
-    if (matches.length === 0) {
+    });
+    if(matches.length === 0){
       autocompleteList.style.display = 'none';
-      addEmployeeBtn.disabled = false; // allow adding unknown code
+      updateButtonsState();
       return;
     }
-
-    for (const match of matches) {
+    autocompleteList.innerHTML = '';
+    matches.slice(0,20).forEach(match => {
       const div = document.createElement('div');
-      div.textContent = `${match.code} - ${match.name}`;
-      div.dataset.code = match.code;
-      div.dataset.name = match.name;
+      div.textContent = match;
+      div.dataset.code = match.split(' - ')[0];
+      div.dataset.name = match.split(' - ')[1];
       div.addEventListener('click', () => {
-        employeeCodeInput.value = match.code;
+        employeeCodeInput.value = match;
         autocompleteList.style.display = 'none';
-        addEmployeeBtn.disabled = selectedEmployees.has(match.code);
+        addEmployeeBtn.disabled = false;
+        updateButtonsState();
       });
       autocompleteList.appendChild(div);
-    }
+    });
     autocompleteList.style.display = 'block';
-    addEmployeeBtn.disabled = true;
+    updateButtonsState();
   });
+  employeeCodeInput.addEventListener('blur', ()=>{ setTimeout(()=>{ autocompleteList.style.display='none'; }, 200); });
 
-  document.addEventListener('click', e => {
-    if (!employeeCodeInput.contains(e.target) && !autocompleteList.contains(e.target)) {
-      autocompleteList.style.display = 'none';
-    }
-  });
-
-  addEmployeeBtn.addEventListener('click', () => {
-    const code = employeeCodeInput.value.trim();
-    if (!code) {
-      alert('Please enter an employee code.');
-      return;
-    }
-    if (selectedEmployees.has(code)) {
-      alert('Employee already added');
-      return;
-    }
-    if (employeeMap.has(code)) {
-      const emp = employeeMap.get(code);
-      selectedEmployees.set(code, { name: emp.name, section: emp.section });
-      addEmployeeToTable(code, emp.name, emp.section);
-      clearEmployeeInput();
+  addEmployeeBtn.addEventListener('click', ()=>{
+    let value = employeeCodeInput.value.trim();
+    if(value === '') return;
+    let code, name;
+    if(value.includes(' - ')){
+      code = value.split(' - ')[0].trim();
+      name = value.split(' - ')[1].trim();
     } else {
-      // Show modal for new employee info input
-      pendingNewEmployeeCode = code;
-      newEmployeeNameInput.value = '';
-      newEmployeeSectionInput.value = '';
-      showNewEmployeeModal();
+      code = value;
+      name = employeeMap.has(code) ? employeeMap.get(code).name : '';
+    }
+    if(!employeeMap.has(code)){
+      showNewEmployeeModal(code, name);
+    } else {
+      addEmployeeToTable(code, name || employeeMap.get(code).name);
+      employeeCodeInput.value = '';
+      addEmployeeBtn.disabled = true;
+      updateButtonsState();
     }
   });
 
-  function addEmployeeToTable(code, name, section) {
-    if (selectedEmployeesTable.style.display === 'none') {
+  function showNewEmployeeModal(code, name) {
+    newEmpModal.style.display = 'block';
+    newEmpCode.value = code || '';
+    newEmpName.value = name || '';
+    newEmpSection.value = '';
+    modalSubmitBtn.disabled = true;
+  }
+  function hideNewEmployeeModal() {
+    newEmpModal.style.display = 'none';
+  }
+  function validateModalFields() {
+    modalSubmitBtn.disabled = !(newEmpName.value.trim() !== '' && newEmpSection.value.trim() !== '');
+  }
+
+  modalCancelBtn.addEventListener('click', () => {
+    hideNewEmployeeModal();
+  });
+  newEmpName.addEventListener('input', validateModalFields);
+  newEmpSection.addEventListener('input', validateModalFields);
+
+  modalSubmitBtn.addEventListener('click', () => {
+    const codeInputVal = newEmpCode.value.trim();
+    const name = newEmpName.value.trim();
+    const section = newEmpSection.value.trim();
+    if(!name || !section){
+      alert('Employee name and Section are required.');
+      return;
+    }
+    const code = codeInputVal || generateUniqueCode();
+    addNewEmployee(code, name, section);
+    addEmployeeToTable(code, name);
+    hideNewEmployeeModal();
+    employeeCodeInput.value = '';
+    addEmployeeBtn.disabled = true;
+    updateButtonsState();
+  });
+
+  function generateUniqueCode() {
+    return 'EMP' + Date.now();
+  }
+
+  function addNewEmployee(code, name, section) {
+    const employeesSheet = findSheetInsensitive('Employees_Wise');
+    if(!employeesSheet) {
+      alert('Employees_Wise sheet not found');
+      return;
+    }
+    let maxRow = 3;
+    while(employeesSheet['C' + maxRow]) maxRow++; // Search empty name cell, not code col
+    employeesSheet['B' + maxRow] = {v: code, t: 's'};
+    employeesSheet['C' + maxRow] = {v: name, t: 's'};
+    employeesSheet['D' + maxRow] = {v: section, t: 's'};
+    updateSheetRange(employeesSheet, maxRow, 'C');
+    employeeMap.set(code, { name, section });
+    employeeCodes.push(code);
+    employeeNames.push(name);
+    if(!valueExistsIgnoreCase(sectionSuggestions, section)) sectionSuggestions.push(section);
+  }
+
+  function addEmployeeToTable(code, name){
+    if(selectedEmployeesTable.style.display==='none'){
       selectedEmployeesTable.style.display = 'table';
+    }
+    for(let tr of selectedEmployeesTbody.children){
+      if(tr.dataset.code === code){
+        alert("Employee already added.");
+        return;
+      }
     }
     const tr = document.createElement('tr');
     tr.dataset.code = code;
@@ -445,10 +610,6 @@
     tdName.textContent = name;
     tr.appendChild(tdName);
 
-    const tdSection = document.createElement('td');
-    tdSection.textContent = section;
-    tr.appendChild(tdSection);
-
     const tdRemove = document.createElement('td');
     const removeBtn = document.createElement('button');
     removeBtn.textContent = 'Remove';
@@ -459,249 +620,256 @@
     removeBtn.style.borderRadius = '5px';
     removeBtn.style.cursor = 'pointer';
     removeBtn.addEventListener('click', () => {
-      selectedEmployees.delete(code);
-      newEmployeesMap.delete(code);
       tr.remove();
-      if (selectedEmployees.size === 0) {
+      if(selectedEmployeesTbody.children.length === 0){
         selectedEmployeesTable.style.display = 'none';
       }
-      updateSubmitButtonState();
+      updateButtonsState();
     });
     tdRemove.appendChild(removeBtn);
     tr.appendChild(tdRemove);
 
     selectedEmployeesTbody.appendChild(tr);
+    updateButtonsState();
   }
 
-  dateInput.addEventListener('change', updateSubmitButtonState);
-  trainingSelect.addEventListener('change', updateSubmitButtonState);
-
-  function updateSubmitButtonState() {
-    submitBtn.disabled = !(selectedEmployees.size > 0 && trainingSelect.value !== '' && dateInput.value !== '');
-  }
-
-  // Modal functions
-  function showNewEmployeeModal() {
-    newEmployeeModal.style.display = 'flex';
-    newEmployeeNameInput.focus();
-  }
-  function hideNewEmployeeModal() {
-    newEmployeeModal.style.display = 'none';
-    pendingNewEmployeeCode = '';
-  }
-
-  cancelNewEmployeeBtn.addEventListener('click', () => {
-    hideNewEmployeeModal();
-    clearEmployeeInput();
-  });
-
-  newEmployeeForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const name = newEmployeeNameInput.value.trim();
-    const section = newEmployeeSectionInput.value.trim();
-    if (!name) {
-      alert('Employee name is required.');
-      newEmployeeNameInput.focus();
-      return;
-    }
-    if (!section) {
-      alert('Employee section is required.');
-      newEmployeeSectionInput.focus();
-      return;
-    }
-    if (!pendingNewEmployeeCode) {
-      alert('Invalid employee code.');
-      hideNewEmployeeModal();
-      return;
-    }
-    newEmployeesMap.set(pendingNewEmployeeCode, { name, section });
-    selectedEmployees.set(pendingNewEmployeeCode, { name, section });
-    addEmployeeToTable(pendingNewEmployeeCode, name, section);
-    hideNewEmployeeModal();
-    clearEmployeeInput();
-    updateSubmitButtonState();
-  });
-
-  // Pressing Enter in modal inputs should move focus or submit
-  newEmployeeNameInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      newEmployeeSectionInput.focus();
-    }
-  });
-  newEmployeeSectionInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      newEmployeeForm.dispatchEvent(new Event('submit'));
+  [dateInput, sectionInput, trainerInput, trainingTypeSelect, modeSelect, trainingTopicInput, employeeCodeInput].forEach(el=>{
+    el.addEventListener('input', updateButtonsState);
+    if(el.tagName==='SELECT'){
+      el.addEventListener('change', updateButtonsState);
     }
   });
 
-  function clearEmployeeInput() {
-    employeeCodeInput.value = '';
-    addEmployeeBtn.disabled = true;
-    employeeCodeInput.focus();
+  function findSheetInsensitive(name){
+    if(!workbook || !workbook.SheetNames) return null;
+    const foundName = workbook.SheetNames.find(sn => sn.trim().toLowerCase() === name.trim().toLowerCase());
+    return foundName ? workbook.Sheets[foundName] : null;
   }
 
-  // The rest of your existing submitBtn, downloadBtn and other event handlers remain unchanged
+  function setCell(sheet, addr, val){
+    if(sheet[addr]){
+      sheet[addr].v = val;
+    } else {
+      sheet[addr] = {v: val, t: typeof val === 'number' ? 'n' : 's'};
+    }
+  }
 
-    submitBtn.addEventListener('click', () => {
-    if (selectedEmployees.size === 0) {
-      alert('No employees selected');
-      return;
-    }
-    if (!trainingSelect.value) {
-      alert('Please select training');
-      return;
-    }
-    if (!dateInput.value) {
-      alert('Please select date');
-      return;
-    }
-    const monthSheetName = getMonthSheetName(dateInput.value);
+  function updateSheetRange(sheet, row, colLetter){
+    const range = XLSX.utils.decode_range(sheet['!ref'] || "A1:A1");
+    const col = colLetter.charCodeAt(0)-65;
+    if(row-1 > range.e.r) range.e.r = row-1;
+    if(col > range.e.c) range.e.c = col;
+    sheet['!ref'] = XLSX.utils.encode_range(range);
+  }
 
-    if (!workbook.Sheets[monthSheetName]) {
-      let existingSheetName = workbook.SheetNames.find(name => name !== monthSheetName);
-      if (existingSheetName) {
-        const existingSheet = workbook.Sheets[existingSheetName];
-        const newSheet = XLSX.utils.aoa_to_sheet(XLSX.utils.sheet_to_json(existingSheet, { header: 1 }));
-        workbook.SheetNames.push(monthSheetName);
-        workbook.Sheets[monthSheetName] = newSheet;
-      } else {
-        let ws = {};
-        const masterSheetName = workbook.SheetNames[0];
-        const masterSheet = workbook.Sheets[masterSheetName];
-        const trainingsHeadersRange = XLSX.utils.decode_range("E2:J2");
-        let headers = {};
-        for(let C = trainingsHeadersRange.s.c; C <= trainingsHeadersRange.e.c; ++C){
-          let cell_addr = XLSX.utils.encode_cell({c:C,r:1});
-          headers[cell_addr] = masterSheet[cell_addr] ? {...masterSheet[cell_addr]} : { t:"s", v:"" };
+  function addUniqueSection(sheet, sectionVal){
+    let maxRow = 3;
+    while(sheet['D'+maxRow]) maxRow++;
+    let found = false;
+    for(let r=3; r<maxRow; r++){
+      const cell = sheet['D'+r];
+      if(cell && cell.v && cell.v.toString().toLowerCase() === sectionVal.toLowerCase()){
+        found = true;
+        break;
+      }
+    }
+    if(!found && sectionVal !== ''){
+      sheet['D'+maxRow] = {v: sectionVal, t:'s'};
+      updateSheetRange(sheet, maxRow, 'D');
+      sectionSuggestions.push(sectionVal);
+    }
+  }
+
+  function addUniqueTrainingTopic(sheet, topicVal){
+    const sheetRow = 2;
+    for(let c=TRAINING_TOPIC_START_COL; c<=TRAINING_TOPIC_END_COL; c++){
+      const col = colIndexToLetter(c);
+      const cell = sheet[col + sheetRow];
+      if(cell && cell.v && cell.v.toString().toLowerCase() === topicVal.toLowerCase()){
+        return;
+      }
+    }
+    let appendRow = 2;
+    while(true){
+      const cellAddr = colIndexToLetter(TRAINING_TOPIC_APPEND_COL) + appendRow;
+      if(!sheet[cellAddr] || !sheet[cellAddr].v){
+        sheet[cellAddr] = {v: topicVal, t:'s'};
+        updateSheetRange(sheet, appendRow, colIndexToLetter(TRAINING_TOPIC_APPEND_COL));
+        trainingTopics.push(topicVal);
+        break;
+      }
+      appendRow++;
+      if(appendRow > 1000) break;
+    }
+  }
+
+  submitBtn.addEventListener('click', () => {
+    if(!dateInput.value || trainerInput.value.trim() === '' || sectionInput.value.trim() === ''
+      || trainingTypeSelect.value === '' || modeSelect.value === '' || trainingTopicInput.value.trim() === ''){
+      alert('Please fill all required fields');
+      return;
+    }
+    if(selectedEmployeesTbody.children.length === 0){
+      alert('Add at least one employee.');
+      return;
+    }
+    const employeesSheet = findSheetInsensitive('Employees_Wise');
+    const trainingSheet = findSheetInsensitive('Training_Record');
+    if(!employeesSheet || !trainingSheet){
+      alert('Sheets "Employees_Wise" and/or "Training_Record" not found in uploaded file.');
+      return;
+    }
+
+    const sectionVal = sectionInput.value.trim();
+    const topicVal = trainingTopicInput.value.trim();
+    const trainingTypeVal = trainingTypeSelect.value;
+
+    addUniqueSection(employeesSheet, sectionVal);
+    addUniqueTrainingTopic(employeesSheet, topicVal);
+
+    let topicColIndex = -1;
+    for(let c=TRAINING_TOPIC_START_COL; c<=TRAINING_TOPIC_END_COL; c++){
+      let cell = employeesSheet[colIndexToLetter(c) + '2'];
+      if(cell && cell.v && cell.v.toString().toLowerCase() === topicVal.toLowerCase()){
+        topicColIndex = c;
+        break;
+      }
+    }
+    if(topicColIndex === -1){
+      topicColIndex = TRAINING_TOPIC_APPEND_COL;
+      let appendRow = 2;
+      while(true){
+        let cellAddr = colIndexToLetter(topicColIndex) + appendRow;
+        if(!employeesSheet[cellAddr] || !employeesSheet[cellAddr].v){
+          employeesSheet[cellAddr] = {v: topicVal, t: 's'};
+          updateSheetRange(employeesSheet, appendRow, colIndexToLetter(topicColIndex));
+          break;
         }
-        headers["B2"] = masterSheet["B2"] ? {...masterSheet["B2"]} : { t:"s", v: "Employee Code" };
-        headers["C2"] = masterSheet["C2"] ? {...masterSheet["C2"]} : { t:"s", v: "Employee Name" };
-        headers["D2"] = masterSheet["D2"] ? {...masterSheet["D2"]} : { t:"s", v: "Section" };
-
-        ws["!ref"] = "B2:J2";
-        Object.assign(ws, headers);
-
-        workbook.SheetNames.push(monthSheetName);
-        workbook.Sheets[monthSheetName] = ws;
+        appendRow++;
+        if(appendRow > 1000) break;
       }
     }
 
-    const monthSheet = workbook.Sheets[monthSheetName];
-    let range = XLSX.utils.decode_range(monthSheet['!ref'] || "B2:J700");
-    let maxRow = range.e.r + 1;
-
-    let empInMonth = new Map();
-    for(let row=3; row<=maxRow; row++){
-      let codeCell = monthSheet["B"+row];
-      let nameCell = monthSheet["C"+row];
-      let sectionCell = monthSheet["D"+row];
-      if(codeCell && codeCell.v && nameCell && nameCell.v && sectionCell && sectionCell.v){
-        empInMonth.set(codeCell.v.toString().trim(), {name:nameCell.v.toString().trim(), section:sectionCell.v.toString().trim(), row:row});
+    selectedEmployeesTbody.querySelectorAll('tr').forEach(tr => {
+      const empCode = tr.dataset.code;
+      let empRow = -1;
+      for(let r=3; r<=1000; r++){
+        let nameCell = employeesSheet['C'+r];
+        if(!nameCell || !nameCell.v) continue;
+        if(employeeMap.get(empCode)?.name === nameCell.v.toString()){
+          empRow = r;
+          break;
+        }
       }
-    }
-
-    const trainingColLetter = trainingColumns.get(trainingSelect.value);
-    if(!trainingColLetter){
-      alert("Training column not found in master sheet.");
-      return;
-    }
-
-    let nextRow = maxRow + 1;
-    for (let [code, emp] of newEmployeesMap.entries()) {
-      while(monthSheet["B" + nextRow] && monthSheet["B" + nextRow].v) {
-        nextRow++;
-      }
-      monthSheet["B" + nextRow] = { t: 's', v: code };
-      monthSheet["C" + nextRow] = { t: 's', v: emp.name };
-      monthSheet["D" + nextRow] = { t: 's', v: emp.section };
-
-      let trainingCellAddr = trainingColLetter + nextRow;
-      monthSheet[trainingCellAddr] = { t: 'n', v: 1 };
-
-      employeeMap.set(code, { name: emp.name, section: emp.section, row: nextRow });
-      empInMonth.set(code, { name: emp.name, section: emp.section, row: nextRow });
-
-      nextRow++;
-    }
-
-    for(let [code, emp] of selectedEmployees.entries()){
-      if(newEmployeesMap.has(code)) continue;
-      let empRow = null;
-      if(empInMonth.has(code)){
-        empRow = empInMonth.get(code).row;
+      if(empRow === -1) return;
+      const targetCellAddr = colIndexToLetter(topicColIndex) + empRow;
+      let targetCell = employeesSheet[targetCellAddr];
+      if(!targetCell){
+        employeesSheet[targetCellAddr] = {v: 1, t: 'n'};
       } else {
-        continue;
+        let currentVal = Number(targetCell.v);
+        if(isNaN(currentVal)) currentVal = 0;
+        employeesSheet[targetCellAddr].v = currentVal + 1;
+        employeesSheet[targetCellAddr].t = 'n';
       }
-      let trainingCellAddr = trainingColLetter + empRow;
-      let currentValue = 0;
-      if(monthSheet[trainingCellAddr] && !isNaN(Number(monthSheet[trainingCellAddr].v))) {
-        currentValue = Number(monthSheet[trainingCellAddr].v);
-      }
-      monthSheet[trainingCellAddr] = { t: 'n', v: currentValue + 1 };
-    }
+    });
 
-    range.e.r = Math.max(range.e.r, nextRow - 1 - 1);
-    monthSheet['!ref'] = XLSX.utils.encode_range(range);
+    let rowNum = 3;
+    while(trainingSheet['B' + rowNum] && trainingSheet['B' + rowNum].v !== '') rowNum++;
 
-    statusMessage.textContent = "Attendance recorded in sheet: " + monthSheetName + ". Add more or download when done.";
+    setCell(trainingSheet, 'B'+rowNum, sectionVal);
+    setCell(trainingSheet, 'C'+rowNum, trainerInput.value.trim());
+    setCell(trainingSheet, 'D'+rowNum, dateInput.value);
+    setCell(trainingSheet, 'E'+rowNum, trainingTypeVal);
+    setCell(trainingSheet, 'F'+rowNum, topicVal);
+    setCell(trainingSheet, 'G'+rowNum, modeSelect.value);
+    setCell(trainingSheet, 'H'+rowNum, selectedEmployeesTbody.children.length);
+
+    updateSheetRange(trainingSheet, rowNum, 'H');
+
+    statusMessage.style.color = 'green';
+    statusMessage.textContent = 'Attendance recorded successfully.';
+
     submitBtn.disabled = true;
     addEmployeeBtn.disabled = true;
-    employeeCodeInput.value = "";
-    dateInput.value = "";
-    trainingSelect.value = "";
-    selectedEmployees.clear();
-    newEmployeesMap.clear();
-    selectedEmployeesTbody.innerHTML = "";
+
+    employeeCodeInput.value = '';
+    //dateInput.value = '';
+    sectionInput.value = '';
+    trainerInput.value = '';
+    trainingTypeSelect.value = '';
+    modeSelect.value = '';
+    trainingTopicInput.value = '';
+    selectedEmployeesTbody.innerHTML = '';
     selectedEmployeesTable.style.display = 'none';
     downloadBtn.style.display = 'inline-block';
+    updateButtonsState();
   });
 
-
-  downloadBtn.addEventListener('click', () => {
-    if (!workbook) return;
-    const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'binary' });
-
-    function s2ab(s) {
-      var buf = new ArrayBuffer(s.length);
-      var view = new Uint8Array(buf);
-      for (var i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+  downloadBtn.addEventListener('click', () =>{
+    if(!workbook) return;
+    const wbout = XLSX.write(workbook, {bookType:'xlsx', type:'binary', cellStyles:true});
+    function s2ab(s){
+      const buf = new ArrayBuffer(s.length);
+      const view = new Uint8Array(buf);
+      for(let i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
       return buf;
     }
-
-    var blob = new Blob([s2ab(wbout)], { type: "application/octet-stream" });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
+    const blob = new Blob([s2ab(wbout)], {type:"application/octet-stream"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
     a.href = url;
-    let d = new Date();
-    a.download = `Attendance_File_Updated_${d.getFullYear()}${(d.getMonth() + 1).toString().padStart(2, '0')}${d.getDate().toString().padStart(2, '0')}.xlsx`;
+    const d = new Date();
+    a.download = `Attendance_File_${d.getFullYear()}${(d.getMonth()+1).toString().padStart(2,'0')}${d.getDate().toString().padStart(2,'0')}.xlsx`;
     document.body.appendChild(a);
     a.click();
-    setTimeout(() => {
+    setTimeout(()=>{
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     }, 0);
     statusMessage.textContent = "Updated attendance file downloaded.";
-
-    const newFile = new File([blob], a.download, { type: "application/octet-stream" });
-    const dataTransfer = new DataTransfer();
-    dataTransfer.items.add(newFile);
-    masterFileInput.files = dataTransfer.files;
-
-    removeFileBtn.style.display = 'inline-block';
   });
 
-  removeFileBtn.addEventListener('click', () => {
-    masterFileInput.value = '';
+  removeFileBtn.addEventListener('click', ()=>{
+    masterFileInput.value='';
     resetApp();
+    removeFileBtn.style.display='none';
   });
 
-  
-  // ... (You can use the previously provided full submit and download handlers without modification)
+  function setCell(sheet, addr, val){
+    if(sheet[addr]){
+      sheet[addr].v = val;
+    } else
+        {sheet[addr] = {v: val, t: typeof val === 'number' ? 'n' : 's'};
+    }
+  }
 
+  function updateSheetRange(sheet, row, colLetter){
+    const range = XLSX.utils.decode_range(sheet['!ref'] || "A1:A1");
+    const col = colLetter.charCodeAt(0)-65;
+    if(row-1 > range.e.r) range.e.r = row-1;
+    if(col > range.e.c) range.e.c = col;
+    sheet['!ref'] = XLSX.utils.encode_range(range);
+  }
+
+  // Set initial date on load
+  window.addEventListener('load', () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+    dateInput.value = formattedDate;
+    updateButtonsState(); // Update button states after setting the date
+  });
+
+</script>
+
+<!-- Employee Modal -->
+<script>
+  // Modal logic included in main script above
+  newEmpModal.style.display = 'none';
 </script>
 
 </body>
 </html>
-
